@@ -1,6 +1,7 @@
 var express = require('express');
-var app = express();
+var randomName = require('node-random-name');
 
+var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
@@ -12,13 +13,21 @@ app.get('/', (req, res) => {
 });
 app.use('/client', express.static(__dirname + '/client'));
 
+var socketList = {};
+
 io.on('connection',(socket) => {
-    console.log("User connection");
+    socket.userName = randomName({first:true}) + "#" + Math.floor(Math.random() * 10000);
+    socket.id = Math.random();
+    socketList[socket.id] = socket;
+    console.log("New conn " + socket.userName);
+    io.emit('userEnter',socket.userName);
     socket.on('disconnect', () => {
-        console.log("User disconnected");
+        io.emit('userLeave', socket.userName);
     });
     socket.on('chat message', (msg) =>{
-        io.emit('chat message', msg);
+        if(msg !== ''){
+            io.emit('chat message', {userName: socket.userName, msg});
+        }
     });
 });
 
