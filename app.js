@@ -4,6 +4,7 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
+var port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
 var ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
 
 app.get('/', (req, res) => {
@@ -21,6 +22,6 @@ io.on('connection',(socket) => {
     });
 });
 
-server.listen(2000,ip, () => {
-    console.log("Listening on server 2000");
+server.listen(port,ip, () => {
+    console.log("Listening on " + ip + ":" + port);
 });
