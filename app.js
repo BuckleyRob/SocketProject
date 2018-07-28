@@ -4,6 +4,8 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
+var ip   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
+
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/client/index.html');
 });
@@ -19,6 +21,6 @@ io.on('connection',(socket) => {
     });
 });
 
-server.listen(2000, () => {
+server.listen(2000,ip, () => {
     console.log("Listening on server 2000");
 });
